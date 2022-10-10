@@ -1,15 +1,6 @@
-## TODO: Create a shot class to store these functions
-
-def calculate_quadratic_values(a, b, c):
-    '''
-    Given values a, b, and c,
-    the function returns the output of the quadratic formula
-    '''
-    x1 = (-b + (b ** 2 - 4 * a * c) ** 0.5) / (2 * a)
-    x2 = (-b - (b ** 2 - 4 * a * c) ** 0.5) / (2 * a)
-
-    return x1, x2
-
+# TODO: Create a shot class for these functions to live in
+import numpy as np
+from utils import calculate_quadratic_values
 
 def calculate_vertex_quadratic_coefficients(x1, y1, x2, y2, k):
     '''

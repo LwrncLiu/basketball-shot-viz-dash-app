@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+from utils import calculate_quadratic_values
 
 def get_3point_line_coordinates():
     line_coordinates = []

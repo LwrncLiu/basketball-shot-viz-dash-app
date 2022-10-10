@@ -14,7 +14,7 @@ class CourtCoordinates:
         self.hoop_coordinates = []
         self.court_lines_coordinates = []
 
-    def get_court_perimeter_coordinates(self):
+    def calculate_court_perimeter_coordinates(self):
         # half court lines
         # x goes from 250 to -250 (50 feet wide)
         # y should go from 0 to 470 (full court is 94 feet long, half court is 47 feet)
@@ -72,7 +72,7 @@ class CourtCoordinates:
         court_df['line_id'] = 'outside_perimeter'
 
         self.calculate_three_point_line_coordinates()
-        three_point_line_df = pd.DataFrame(self.court_perimeter_coordinates, columns=['x', 'y', 'z'])
+        three_point_line_df = pd.DataFrame(self.three_point_line_coordinates, columns=['x', 'y', 'z'])
         three_point_line_df['line_id'] = 'three_point_line'
 
         self.calculate_backboard_coordinates()
@@ -86,4 +86,5 @@ class CourtCoordinates:
         self.court_lines_coordinates = pd.concat([court_df, three_point_line_df, backboard_df, hoop_df], ignore_index = True, axis=0)
 
     def get_court_lines_coordinates(self):
+        self.calculate_court_lines_coordinates()
         return self.court_lines_coordinates

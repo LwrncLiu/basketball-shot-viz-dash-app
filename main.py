@@ -91,7 +91,25 @@ def update_graph(option_slctd):
     # )
 
     return container, fig
-
+#
+# court_lines_df = get_court_line_coordinates()
+#
+# shot_location = (177, 53, 0)
+# shot_3d_coordinates = calculate_shot_path_coordinates(shot_location)
+# df1 = pd.DataFrame(shot_3d_coordinates, columns=['x', 'y', 'z', 'i'])
+# df1['line_id'] = 'JT'
+# df1['color'] = 'green'
+#
+# shot_location = (180, 400, 0)
+# shot_3d_coordinates = calculate_shot_path_coordinates(shot_location)
+# df2 = pd.DataFrame(shot_3d_coordinates, columns=['x', 'y', 'z', 'i'])
+# df2['line_id'] = 'IT'
+# df2['color'] = 'red'
+#
+# df = pd.concat([df1, df2, court_lines_df], ignore_index=True, axis=0)
+#
+# fig = px.line_3d(df, x='x', y='y', z='z', line_group='line_id')
+# fig
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

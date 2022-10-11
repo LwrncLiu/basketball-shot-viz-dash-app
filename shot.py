@@ -6,7 +6,7 @@ from utils import calculate_quadratic_values
 
 
 class BasketballShot:
-    def __init__(self, shot_start_x, shot_start_y, shot_start_z):
+    def __init__(self, shot_start_x, shot_start_y, shot_start_z, shot_result, temp_id):
         self.hoop_loc_x = 0
         self.hoop_loc_y = 52
         self.hoop_loc_z = 100
@@ -15,6 +15,8 @@ class BasketballShot:
         self.shot_start_x = shot_start_x
         self.shot_start_y = shot_start_y
         self.shot_start_z = shot_start_z
+        self.shot_result = shot_result
+        self.shot_id = temp_id
         self.shot_path_coordinates_df = pd.DataFrame()
 
     @staticmethod
@@ -127,8 +129,8 @@ class BasketballShot:
                 shot_path_coordinates.append([shot_start_x + (x_shift_per_coord * index), y, z])
 
         self.shot_path_coordinates_df = pd.DataFrame(shot_path_coordinates, columns=['x', 'y', 'z'])
-        self.shot_path_coordinates_df['line_id'] = 'JT'
-        self.shot_path_coordinates_df['line_group_id'] = 'JT'
+        self.shot_path_coordinates_df['line_id'] = self.shot_id
+        self.shot_path_coordinates_df['line_group_id'] = "shot_make" if self.shot_result == 'make' else "shot_miss"
 
     def get_shot_path_coordinates(self):
         self.calculate_shot_path_coordinates()

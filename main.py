@@ -10,14 +10,70 @@ import dash_bootstrap_components as dbc
 court = CourtCoordinates()
 court_df = court.get_court_lines_coordinates()
 
-shot1 = BasketballShot(180, 400, 0)
+shot1 = BasketballShot(-148, 207, 0, 'miss',1)
 shot1_df = shot1.get_shot_path_coordinates()
 
-fig = px.line_3d(data_frame=pd.concat([court_df, shot1_df], ignore_index=True, axis=0),
+shot2 = BasketballShot(-46, 1, 0, 'miss',2)
+shot2_df = shot2.get_shot_path_coordinates()
+
+shot3 = BasketballShot(-63, 138, 0, 'make',3)
+shot3_df = shot3.get_shot_path_coordinates()
+
+shot4 = BasketballShot(-240, 50, 0, 'make',4)
+shot4_df = shot4.get_shot_path_coordinates()
+
+shot5 = BasketballShot(-44, 183, 0, 'make',5)
+shot5_df = shot5.get_shot_path_coordinates()
+
+shot6 = BasketballShot(-198, 91, 0, 'miss',6)
+shot6_df = shot6.get_shot_path_coordinates()
+
+shot7 = BasketballShot(-119, 139, 0, 'make',7)
+shot7_df = shot7.get_shot_path_coordinates()
+
+shot8 = BasketballShot(92, 32, 0, 'miss',8)
+shot8_df = shot8.get_shot_path_coordinates()
+
+shot9 = BasketballShot(-18, -3, 0, 'make',9)
+shot9_df = shot9.get_shot_path_coordinates()
+
+shot10 = BasketballShot(227, 29, 0, 'miss',10)
+shot10_df = shot10.get_shot_path_coordinates()
+
+shot11 = BasketballShot(6, -8, 0, 'make',11)
+shot11_df = shot11.get_shot_path_coordinates()
+
+shot12 = BasketballShot(193, 199, 0, 'miss',12)
+shot12_df = shot12.get_shot_path_coordinates()
+
+shot13 = BasketballShot(-157, 203, 0, 'miss',13)
+shot13_df = shot13.get_shot_path_coordinates()
+
+shot14 = BasketballShot(-26, 192, 0, 'make',14)
+shot14_df = shot14.get_shot_path_coordinates()
+
+shot15 = BasketballShot(-5, 19, 0, 'make',15)
+shot15_df = shot15.get_shot_path_coordinates()
+
+shot16 = BasketballShot(35, 13, 0, 'miss',16)
+shot16_df = shot16.get_shot_path_coordinates()
+
+
+fig = px.line_3d(data_frame=pd.concat([court_df, shot1_df, shot2_df, shot3_df
+                                       , shot4_df, shot5_df, shot6_df
+                                       , shot7_df, shot8_df, shot9_df
+                                       , shot10_df, shot11_df, shot12_df, shot13_df, shot14_df,
+                                       shot15_df, shot16_df], ignore_index=True, axis=0),
                  x='x',
                  y='y',
                  z='z',
-                 line_group='line_id')
+                 line_group='line_id',
+                 color='line_group_id',
+                 color_discrete_map={
+                     "court": "black",
+                     "shot_make": "green",
+                     "shot_miss": "red"
+                 })
 # Build your components
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 graph_title = dcc.Markdown(children='# 3D Visualization of NBA Shot Attempts')

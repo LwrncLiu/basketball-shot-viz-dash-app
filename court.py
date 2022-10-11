@@ -84,7 +84,8 @@ class CourtCoordinates:
         hoop_df['line_id'] = 'hoop'
 
         self.court_lines_coordinates_df= pd.concat([court_df, three_point_line_df, backboard_df, hoop_df], ignore_index=True, axis=0)
-        self.court_lines_coordinates_df['line_group_id'] = 'court_lines'
+        self.court_lines_coordinates_df['line_group_id'] = 'court'
+
 
     def get_court_lines_coordinates(self):
         self.calculate_court_lines_coordinates()

@@ -1,22 +1,24 @@
 # TODO: Create a shot class for these functions to live in
 import numpy as np
+import pandas as pd
+
 from utils import calculate_quadratic_values
 
 
 class BasketballShot:
-    def __init__(self):
+    def __init__(self, shot_start_x, shot_start_y, shot_start_z):
         self.hoop_loc_x = 0
         self.hoop_loc_y = 52
         self.hoop_loc_z = 100
         self.shot_vertex_z = 170
         self.num_coordinates = 100
-        self.shot_start_x = None
-        self.shot_start_y = None
-        self.shot_start_z = None
-        self.shot_path_coordinates = []
+        self.shot_start_x = shot_start_x
+        self.shot_start_y = shot_start_y
+        self.shot_start_z = shot_start_z
+        self.shot_path_coordinates_df = pd.DataFrame()
 
     @staticmethod
-    def calculate_vertex_quadratic_coefficients(self, x1, y1, x2, y2, k):
+    def calculate_vertex_quadratic_coefficients(x1, y1, x2, y2, k):
         # Given the 2D coordinates of the shot, the hoop, and shot height,
         # the functions returns the coefficients of the quadratic formula.
         # The equations for a, b, and c are derived from using two parabola vertex form equations to solve for h (vertex x_value)    a = y2 - y1
@@ -27,7 +29,7 @@ class BasketballShot:
         return a, b, c
 
     @staticmethod
-    def calculate_2d_parabola_coefficient_a(self, x, y, h, k):
+    def calculate_2d_parabola_coefficient_a(x, y, h, k):
         # Given an (x, y) pair of a parabola as well as the vertex (x, y) pair, return the a coefficient of the quadratic equation
         # a is derived from the vertex form: y = a(x - h)**2 + k
         a = (y - k) / (x - h) ** 2
@@ -51,13 +53,13 @@ class BasketballShot:
 
         return shot_vertex_y
 
-    def calculate_shot_path_coordinates(self, shot_loc):
+    def calculate_shot_path_coordinates(self):
         '''
         Given a (x, y, z) coordinate of the start of a shot,
         the function returns 101 coordinates in 3D space that
         '''
         # shot coordinate
-        shot_start_x, shot_start_y, shot_start_z = shot_loc
+        shot_start_x, shot_start_y, shot_start_z = self.shot_start_x, self.shot_start_y, self.shot_start_z
 
         # setting 17 feet as height of all shots
         shot_vertex_z = self.shot_vertex_z
@@ -80,10 +82,10 @@ class BasketballShot:
                                                            shot_vertex_z)
 
             # calculate the 'a' value from the vertex form of a parabola
-            a = self.calculate_2d_parabola_coefficent_a(shot_start_x,
-                                                        shot_start_z,
-                                                        shot_vertex_x,
-                                                        shot_vertex_z)
+            a = self.calculate_2d_parabola_coefficient_a(shot_start_x,
+                                                         shot_start_z,
+                                                         shot_vertex_x,
+                                                         shot_vertex_z)
 
             # now calculate y-values for all x-values between shot_start_x and hoop_x
             # as well as the horizontal shift between the hoop and the shot for the 3rd dimension (may not be necessary)
@@ -95,7 +97,7 @@ class BasketballShot:
 
             for index, x in enumerate(np.arange(shot_start_x, hoop_x - 1, x_shift_per_coord)):
                 z = a * (x - shot_vertex_x) ** 2 + shot_vertex_z
-                shot_path_coordinates.append([x, shot_start_y + (y_shift_per_coord * index), z, index])
+                shot_path_coordinates.append([x, shot_start_y + (y_shift_per_coord * index), z])
 
         # calculate the shot coordinates as a 2d parabola from the side view
         else:
@@ -107,10 +109,10 @@ class BasketballShot:
                                                            shot_vertex_z)
 
             # calculate the 'a' value from the vertex form of a parabola
-            a = self.calculate_2d_parabola_coefficent_a(shot_start_y,
-                                                        shot_start_z,
-                                                        shot_vertex_y,
-                                                        shot_vertex_z)
+            a = self.calculate_2d_parabola_coefficient_a(shot_start_y,
+                                                         shot_start_z,
+                                                         shot_vertex_y,
+                                                         shot_vertex_z)
 
             # now calculate x-values for all y-values between shot_start_y and hoop_y
             # as well as the horizontal shift between the hoop and the shot for the 3rd dimension
@@ -122,11 +124,13 @@ class BasketballShot:
 
             for index, y in enumerate(np.arange(shot_start_y, hoop_y - 1, y_shift_per_coord)):
                 z = a * (y - shot_vertex_y) ** 2 + shot_vertex_z
-                shot_path_coordinates.append([shot_start_x + (x_shift_per_coord * index), y, z, index])
+                shot_path_coordinates.append([shot_start_x + (x_shift_per_coord * index), y, z])
 
-        self.shot_path_coordinates = shot_path_coordinates
+        self.shot_path_coordinates_df = pd.DataFrame(shot_path_coordinates, columns=['x', 'y', 'z'])
+        self.shot_path_coordinates_df['line_id'] = 'JT'
+        self.shot_path_coordinates_df['line_group_id'] = 'JT'
 
-    def get_shot_path_coordinates(self, shot_loc):
-        self.calculate_shot_path_coordinates(shot_loc)
+    def get_shot_path_coordinates(self):
+        self.calculate_shot_path_coordinates()
 
-        return self.shot_path_coordinates
+        return self.shot_path_coordinates_df

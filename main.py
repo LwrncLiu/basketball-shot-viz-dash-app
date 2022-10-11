@@ -1,97 +1,46 @@
 import pandas as pd
-import plotly.express as px  # (version 4.7.0 or higher)
+import plotly.express as px  # allows you to create graphs
 import plotly.graph_objects as go
 from dash import Dash, dcc, html, Input, Output  # pip install dash (version 2.0.0 or higher)
+from court import CourtCoordinates
+from shot import BasketballShot
+import dash_bootstrap_components as dbc
 
+# Incorporate data into app
+court = CourtCoordinates()
+court_df = court.get_court_lines_coordinates()
 
+shot1 = BasketballShot(180, 400, 0)
+shot1_df = shot1.get_shot_path_coordinates()
 
+fig = px.line_3d(data_frame=pd.concat([court_df, shot1_df], ignore_index=True, axis=0),
+                 x='x',
+                 y='y',
+                 z='z',
+                 line_group='line_id')
+# Build your components
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+graph_title = dcc.Markdown(children='# 3D Visualization of NBA Shot Attempts')
+shot_graph = dcc.Graph(figure=fig)
 
+# Customize your own Layout
+app.layout = dbc.Container([graph_title, shot_graph])
 
-app = Dash(__name__)
-
-# -- Import and clean data (importing csv into pandas)
-# df = pd.read_csv("intro_bees.csv")
-df = pd.read_csv("https://raw.githubusercontent.com/Coding-with-Adam/Dash-by-Plotly/master/Other/Dash_Introduction/intro_bees.csv")
-
-df = df.groupby(['State', 'ANSI', 'Affected by', 'Year', 'state_code'])[['Pct of Colonies Impacted']].mean()
-df.reset_index(inplace=True)
-print(df[:5])
-
-# ------------------------------------------------------------------------------
-# App layout
-app.layout = html.Div([
-
-    html.H1("Web Application Dashboards with Dash", style={'text-align': 'center'}),
-
-    dcc.Dropdown(id="slct_year",
-                 options=[
-                     {"label": "2015", "value": 2015},
-                     {"label": "2016", "value": 2016},
-                     {"label": "2017", "value": 2017},
-                     {"label": "2018", "value": 2018}],
-                 multi=False,
-                 value=2015,
-                 style={'width': "40%"}
-                 ),
-
-    html.Div(id='output_container', children=[]),
-    html.Br(),
-
-    dcc.Graph(id='my_bee_map', figure={})
-
-])
-
-
-# ------------------------------------------------------------------------------
-# Connect the Plotly graphs with Dash Components
-@app.callback(
-    [Output(component_id='output_container', component_property='children'),
-     Output(component_id='my_bee_map', component_property='figure')],
-    [Input(component_id='slct_year', component_property='value')]
-)
-def update_graph(option_slctd):
-    print(option_slctd)
-    print(type(option_slctd))
-
-    container = "The year chosen by user was: {}".format(option_slctd)
-
-    dff = df.copy()
-    dff = dff[dff["Year"] == option_slctd]
-    dff = dff[dff["Affected by"] == "Varroa_mites"]
-
-    # Plotly Express
-    fig = px.choropleth(
-        data_frame=dff,
-        locationmode='USA-states',
-        locations='state_code',
-        scope="usa",
-        color='Pct of Colonies Impacted',
-        hover_data=['State', 'Pct of Colonies Impacted'],
-        color_continuous_scale=px.colors.sequential.YlOrRd,
-        labels={'Pct of Colonies Impacted': '% of Bee Colonies'},
-        template='plotly_dark'
-    )
-
-    # Plotly Graph Objects (GO)
-    # fig = go.Figure(
-    #     data=[go.Choropleth(
-    #         locationmode='USA-states',
-    #         locations=dff['state_code'],
-    #         z=dff["Pct of Colonies Impacted"].astype(float),
-    #         colorscale='Reds',
-    #     )]
-    # )
-    #
-    # fig.update_layout(
-    #     title_text="Bees Affected by Mites in the USA",
-    #     title_xanchor="center",
-    #     title_font=dict(size=24),
-    #     title_x=0.5,
-    #     geo=dict(scope='usa'),
-    # )
-
-    return container, fig
+# Callback allows components to interact
+# Callback decorator has an output and input
+# @app.callback(
+#     Output(shot_graph, component_property='figure'),
+#     Input(dropdown, component_property='value')
+# )
+# def update_graph(user_input): # the function argument(s) come from the component property of the Input
+#     fig = px.line_3d(data_frame=df,
+#                      x='x',
+#                      y='y',
+#                      z='z',
+#                      line_group='line_id')
 #
+#     return fig
+
 # court_lines_df = get_court_line_coordinates()
 #
 # shot_location = (177, 53, 0)

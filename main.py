@@ -36,7 +36,7 @@ app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 dropdown_option_styles = {'color': 'white', 'text-align': 'center'}
-graph_title = dcc.Markdown(children='# Field Goal Attempts from the 2021-2022 NBA season', style={'color': 'white'})
+graph_title = dcc.Markdown(children='# Field Goal Attempts from the 2000-2022 NBA season', style={'color': 'white'})
 season_option_title = dcc.Markdown(children='Season *', style=dropdown_option_styles)
 team_option_title = dcc.Markdown(children='Team *', style=dropdown_option_styles)
 player_option_title = dcc.Markdown(children='Player', style=dropdown_option_styles)

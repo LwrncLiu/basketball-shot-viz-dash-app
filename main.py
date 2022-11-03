@@ -10,7 +10,7 @@ from google.cloud import bigquery
 
 load_dotenv()
 # establish connection to database
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 client = bigquery.Client()
 
 # get the court lines from the CourtCoordinates class
@@ -32,6 +32,7 @@ available_seasons = seasons_df.to_dict('records')
 
 # dash components
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+# Declare server for Heroku deployment. Needed for Procfile.
 server = app.server
 
 dropdown_option_styles = {'color': 'white', 'text-align': 'center'}

@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from utils import calculate_quadratic_values
 
 
 class CourtCoordinates:
@@ -13,6 +12,17 @@ class CourtCoordinates:
         self.backboard_coordinates = []
         self.hoop_coordinates = []
         self.court_lines_coordinates_df = pd.DataFrame()
+
+    @staticmethod
+    def calculate_quadratic_values(a, b, c):
+        '''
+        Given values a, b, and c,
+        the function returns the output of the quadratic formula
+        '''
+        x1 = (-b + (b ** 2 - 4 * a * c) ** 0.5) / (2 * a)
+        x2 = (-b - (b ** 2 - 4 * a * c) ** 0.5) / (2 * a)
+
+        return x1, x2
 
     def calculate_court_perimeter_coordinates(self):
         # half court lines
@@ -53,13 +63,14 @@ class CourtCoordinates:
 
         hoop_center_x, hoop_center_y, hoop_center_z = (self.hoop_loc_x, self.hoop_loc_y, self.hoop_loc_z)
         hoop_min_x, hoop_max_x = (-7.5, 7.5)
+        hoop_step = 0.5
         hoop_radius = 7.5
 
         a = 1
         b = -2 * hoop_center_y
-        for hoop_coord_x in np.arange(hoop_min_x, hoop_max_x, 0.5):
+        for hoop_coord_x in np.arange(hoop_min_x, hoop_max_x + hoop_step, hoop_step):
             c = hoop_center_y ** 2 + (hoop_center_x - hoop_coord_x) ** 2 - hoop_radius ** 2
-            hoop_coord_y1, hoop_coord_y2 = calculate_quadratic_values(a, b, c)
+            hoop_coord_y1, hoop_coord_y2 = self.calculate_quadratic_values(a, b, c)
 
             hoop_coordinates_top_half.append([hoop_coord_x, hoop_coord_y1, hoop_center_z])
             hoop_coordinates_bottom_half.append([hoop_coord_x, hoop_coord_y2, hoop_center_z])
@@ -70,22 +81,24 @@ class CourtCoordinates:
         self.calculate_court_perimeter_coordinates()
         court_df = pd.DataFrame(self.court_perimeter_coordinates, columns=['x', 'y', 'z'])
         court_df['line_id'] = 'outside_perimeter'
+        court_df['line_group_id'] = 'court'
 
         self.calculate_three_point_line_coordinates()
         three_point_line_df = pd.DataFrame(self.three_point_line_coordinates, columns=['x', 'y', 'z'])
         three_point_line_df['line_id'] = 'three_point_line'
+        three_point_line_df['line_group_id'] = 'court'
 
         self.calculate_backboard_coordinates()
         backboard_df = pd.DataFrame(self.backboard_coordinates, columns=['x', 'y', 'z'])
         backboard_df['line_id'] = 'backboard'
+        backboard_df['line_group_id'] = 'court'
 
         self.calculate_hoop_coordinates()
         hoop_df = pd.DataFrame(self.hoop_coordinates, columns=['x', 'y', 'z'])
         hoop_df['line_id'] = 'hoop'
+        hoop_df['line_group_id'] = 'hoop'
 
         self.court_lines_coordinates_df= pd.concat([court_df, three_point_line_df, backboard_df, hoop_df], ignore_index=True, axis=0)
-        self.court_lines_coordinates_df['line_group_id'] = 'court'
-
 
     def get_court_lines_coordinates(self):
         self.calculate_court_lines_coordinates()

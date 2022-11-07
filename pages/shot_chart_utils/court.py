@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-
+# TODO: store coordinates in csv file
 class CourtCoordinates:
     def __init__(self):
         self.hoop_loc_x = 0

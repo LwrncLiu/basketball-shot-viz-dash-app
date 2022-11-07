@@ -1,16 +1,20 @@
+import dash
 import pandas as pd
 import plotly.express as px  # allows you to create graphs
-from dash import Dash, dcc, Input, Output, State, html  # pip install dash (version 2.0.0 or higher)
-from court import CourtCoordinates
+from dash import callback, dcc, Input, Output, State, html  # pip install dash (version 2.0.0 or higher)
+from .shot_chart_utils.court import CourtCoordinates
 import dash_bootstrap_components as dbc
 import os
 from dotenv import load_dotenv
-from basketballshot import BasketballShot
+from .shot_chart_utils.basketballshot import BasketballShot
 from google.cloud import bigquery
+
+# dash components
+dash.register_page(__name__)
 
 load_dotenv()
 # establish connection to database
-# os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 client = bigquery.Client()
 
 # get the court lines from the CourtCoordinates class
@@ -29,11 +33,6 @@ season_query = """
 
 seasons_df = client.query(season_query).to_dataframe()  # Make an API request.
 available_seasons = seasons_df.to_dict('records')
-
-# dash components
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
-# Declare server for Heroku deployment. Needed for Procfile.
-server = app.server
 
 dropdown_option_styles = {'color': 'white', 'text-align': 'center'}
 graph_title = dcc.Markdown(children='# NBA Field Goal Attempts from 2000 to 2022', style={'color': 'white'})
@@ -105,7 +104,7 @@ graph_loading_spinner = dbc.Spinner(shot_graph, id='graph_spinner',
                                     spinner_style={'width': '4rem', 'height': '4rem', 'color': 'white'})
 
 # Layout formatting
-app.layout = html.Div(
+layout = html.Div(
     dbc.Container([
         dbc.Row([
             dbc.Col([graph_title])
@@ -136,7 +135,7 @@ app.layout = html.Div(
 )
 
 
-@app.callback(
+@callback(
     Output(team_option, component_property='options'),
     Input(season_option, component_property='value')
 )
@@ -162,7 +161,7 @@ def update_team_option(season_selected):
     return [{'label': i['team_name'], 'value': i['team_id']} for i in possible_teams_dict]
 
 
-@app.callback(
+@callback(
     Output(player_option, component_property='options'),
     [Input(team_option, component_property='value'),
      Input(season_option, component_property='value')]
@@ -198,7 +197,7 @@ def update_player_option(team_selected, season_selected):
     return [{'label': i['player_name'], 'value': i['player_id']} for i in possible_players_dict]
 
 
-@app.callback(
+@callback(
     Output(game_option, component_property='options'),
     [Input(team_option, component_property='value'),
      Input(player_option, component_property='value'),
@@ -259,7 +258,7 @@ def update_game_option(team_selected, player_selected, season_selected):
     return [{'label': i['game_name'], 'value': i['game_id']} for i in possible_games_dict]
 
 
-@app.callback(
+@callback(
     [Output('generate_graph_button', component_property='color'),
      Output('generate_graph_button', component_property='disabled')],
     [Input(season_option, component_property='value'),
@@ -279,7 +278,7 @@ def update_button(season_selected, team_selected, game_selected):
     return invalid_button_color, invalid_button_disabled_state
 
 
-@app.callback(
+@callback(
     [Output('season_option', component_property='value'),
      Output('team_option', component_property='value'),
      Output('player_option', component_property='value'),
@@ -296,7 +295,7 @@ def clear_selections(button_clicked):
 
     return season_value, team_value, player_value, game_value, reset_button
 
-@app.callback(
+@callback(
     [Output(shot_graph, component_property='figure'),
      Output(summary_card, component_property='children'),
      Output('generate_graph_button', component_property='n_clicks')],
@@ -517,6 +516,6 @@ def update_graph_and_card(player_selected,
 
     return fig, summary_string, reset_button_clicks_num
 
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
+#
+# if __name__ == '__main__':
+#     app.run_server(debug=True)

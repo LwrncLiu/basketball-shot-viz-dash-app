@@ -1,0 +1,10 @@
+.avatar-head {
+    height: 100px;
+    width: 80px;
+    background-color: #ffdbac;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+}
+

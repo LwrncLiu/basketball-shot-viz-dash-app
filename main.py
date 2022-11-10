@@ -1,9 +1,19 @@
 from dash import html, dcc
 from dash.dependencies import Input, Output
+import dash
+import dash_bootstrap_components as dbc
 
-# connect to main app.py file
-from app import app
+# first register the app
+custom_font_sheets = [
+    "https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap"
+]
+app = dash.Dash(__name__,
+                external_stylesheets=[dbc.themes.BOOTSTRAP, custom_font_sheets],
+                meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+                suppress_callback_exceptions=True)
+server = app.server
 
+# and then call from the pages in the app
 from pages import shot_chart, home_page, resume
 
 app.layout = html.Div([

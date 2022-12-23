@@ -1,20 +1,23 @@
-# Define the Dash App and it's properties here
-
-from dash import html, dcc
-from dash.dependencies import Input, Output
-import dash_bootstrap_components as dbc
-
 import dash
 import pandas as pd
 import plotly.express as px  # allows you to create graphs
 from dash import callback, dcc, Input, Output, State, html  # pip install dash (version 2.0.0 or higher)
-from .shot_chart_utils.court import CourtCoordinates
+from shot_chart_utils.court import CourtCoordinates
 import dash_bootstrap_components as dbc
 import os
 from dotenv import load_dotenv
-from .shot_chart_utils.basketballshot import BasketballShot
+from shot_chart_utils.basketballshot import BasketballShot
 from google.cloud import bigquery
 
+custom_font_sheets = [
+    "https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap"
+]
+
+app = dash.Dash(__name__,
+                external_stylesheets=[dbc.themes.BOOTSTRAP, custom_font_sheets],
+                meta_tags=[{"name": "viewport", "content": "width=device-width"}],
+                suppress_callback_exceptions=True)
+server = app.server
 
 load_dotenv()
 # establish connection to database
@@ -520,6 +523,5 @@ def update_graph_and_card(player_selected,
 
     return fig, summary_string, reset_button_clicks_num
 
-#
-# if __name__ == '__main__':
-#     app.run_server(debug=True)
+if __name__ == '__main__':
+    app.run_server(debug=True)

@@ -111,7 +111,7 @@ graph_loading_spinner = dbc.Spinner(shot_graph, id='graph_spinner',
                                     spinner_style={'width': '4rem', 'height': '4rem', 'color': 'white'})
 
 # Layout formatting
-layout = html.Div(
+app.layout = html.Div(
     dbc.Container([
         dbc.Row([
             dbc.Col([graph_title])

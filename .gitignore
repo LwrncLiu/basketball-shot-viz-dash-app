@@ -1,2 +1,2 @@
 .env
-pages/shot_chart_utils/bigquery_key.json
+shot_chart_utils/bigquery_key.json
